@@ -3,6 +3,7 @@ session_start();
 if ($_SESSION['password']) {
     // bibbity bobbity boo
 } else {
+    $_SESSION['goto'] = 'admin';
     header("Location: login_page.php");
     exit;
 }

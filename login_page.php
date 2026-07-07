@@ -56,7 +56,7 @@
     <header class="bg-primary bg-gradient">
         <div class="container px-4 text-center" style="color: green">
             <h1>"<p class="fw-bolder">Admin Login</p></h1>
-                <p class="lead">You will need to enter a password before you can gain access to the table</p>
+                <p class="lead">You will need to enter your details to gain access</p>
         </div>
     </header>
     <div style="color: green; height: 50px">
@@ -65,6 +65,13 @@
         </h4>
     </div>
     <form action="verify.php" method="post">
+        <h4>
+            <?php echo '<p>Username</p>'; ?><br>
+        </h4>
+        <input type="text" name="adminname" required>
+        <h4>
+            <?php echo '<p>Password</p>'; ?><br>
+        </h4>
         <input type="password" name="password" required>
         <br><br>
         <input type="submit" value="Enter" class="btn btn-lg btn-light border border-primary" >

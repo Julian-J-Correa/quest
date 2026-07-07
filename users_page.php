@@ -3,7 +3,8 @@ session_start();
 if ($_SESSION['password']) {
     // bibbity bobbity boo
 } else {
-    header("Location: login_page.php");
+    $_SESSION['goto'] = 'users';
+    header("Location: users_page.php");
     exit;
 }
 $dateMin = $_POST['dateMin'] ?? '';
