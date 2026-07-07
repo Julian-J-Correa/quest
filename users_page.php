@@ -23,7 +23,7 @@ if ($conn->connect_error) {
     die("Failed connection: " . $conn->connect_error);
 }
 
-$record_count = $conn->query("SELECT * FROM results");
+$record_count = $conn->query("SELECT * FROM users");
 $num_of_rows = $record_count->num_rows;
 $pages = ceil($num_of_rows / $page_rows);
 if (isset($_GET['page-nr'])) {
@@ -212,9 +212,9 @@ if ($stmt->execute()) {
     </nav>
     <header class="bg-primary bg-gradient">
         <div class="container px-4 text-center" style="color: green">
-            <h1>"<p class="fw-bolder">The PHP Questionaire Table</p>
+            <h1>"<p class="fw-bolder">User Table</p>
             </h1>
-            <p class="lead">This table contains all the information stored in the database from the questionaires</p>
+            <p class="lead">This table contains all users who can access the questionaire data as well as this table</p>
         </div>
     </header>
     <div class="text-center" style="color: green">
@@ -245,83 +245,35 @@ if ($stmt->execute()) {
                         UserID
                     </th>
                     <th>
-                        Name
+                        Username
                     </th>
                     <th>
-                        Reason
+                        Email
                     </th>
                     <th>
-                        Favourite Number
-                    </th>
-                    <th>
-                        Answering By Choice?
-                    </th>
-                    <th>
-                        Part of Earth
-                    </th>
-                    <th>
-                        Favourite Colour
-                    </th>
-                    <th>
-                        Guessed Date of Establishment
-                    </th>
-                    <th>
-                        Tax PDF
-                    </th>
-                    <th>
-                        Link to PDF
-                    </th>
-                    <th>
-                        Date of Creation
-                    </th>
-                    <th>
-                        Actions
+                        Password
                     </th>
                 </tr>
 
-                <?php while ($row = $result->fetch_object()) { ?>
+                <?php while ($row = $users->fetch_object()) { ?>
                     <tr>
                         <td>
                             <?php echo $row->UserID ?>
                         </td>
                         <td>
-                            <?php echo $row->Name ?>
+                            <?php echo $row->Username ?>
                         </td>
                         <td>
-                            <?php echo $row->Reason ?>
+                            <?php echo $row->Email ?>
                         </td>
                         <td>
-                            <?php echo $row->FavNum ?>
+                            <?php echo $row->Password ?>
                         </td>
                         <td>
-                            <?php
-                            if ($row->ByChoice == 1) {
-                                echo "Yes";
-                            } else {
-                                echo "No";
-                            } ?>
-                        </td>
-                        <td>
-                            <?php echo $row->EarthDir ?>
-                        </td>
-                        <td>
-                            <?php echo $row->FavColour ?>
-                        </td>
-                        <td>
-                            <?php echo $row->DateGuess ?>
-                        </td>
-                        <td>
-                            <?php echo $row->TaxName ?>
-                        </td>
-                        <td>
-                            <a href="<?php echo htmlspecialchars($row->TaxPath); ?>" target="_blank">
-                                <?php echo htmlspecialchars($row->TaxName); ?>
+                            <a href="delete_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this record?');">
+                                Edit
                             </a>
-                        </td>
-                        <td>
-                            <?php echo $row->DateCreated ?>
-                        </td>
-                        <td>
                             <a href="delete_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this record?');">
                                 Delete
