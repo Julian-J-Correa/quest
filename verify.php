@@ -12,14 +12,25 @@ if ($conn->connect_error) {
     die("Failed connection: " . $conn->connect_error);
 }
 
-if ( ! empty( $_POST ) ) {
-    if ( isset( $_POST['password']) && isset( $_POST['adminname'])) {
-        $sql = "SELECT 1 FROM users WHERE Email = ? LIMIT 1";
+if (!empty($_POST)) {
+    if (isset($_POST['password']) && isset($_POST['adminname'])) {
+        $_SESSION['adminpassword'] = $_POST['password'];
+        $_SESSION['adminname'] = $_POST['adminname'];
+        $sql = "SELECT 1 FROM users WHERE Username = ? LIMIT 1";
         $stmt = $conn->prepare($sql);
-    	if ( $_POST['password'] == "Quest1!" ) {
-    		$_SESSION['password'] = true;
-            echo whichPage();
-    	} else {
+        $stmt->execute([$_SESSION['adminname']]);
+        $valueExists = $stmt->fetchColumn();
+        if ($valueExists == true) {
+            $sql = "SELECT * FROM users WHERE Username = ? AND Password = ? LIMIT 1";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$_SESSION['adminname']], [$_SESSION['adminpassword']]);
+            $valueExists = $stmt->fetchColumn();
+            if ($valueExists == true) {
+                echo whichPage();
+            } else {
+                header("Location: login_page.php");
+            }
+        } else {
             header("Location: login_page.php");
         }
     } else {
@@ -27,8 +38,9 @@ if ( ! empty( $_POST ) ) {
     }
 }
 
-function whichPage() {
-    switch($_SESSION["goto"]) {
+function whichPage()
+{
+    switch ($_SESSION["goto"]) {
         case "admin":
             header("Location: admin_page.php");
             break;
