@@ -58,8 +58,8 @@ if (isset($_POST['addUser'])) {
 <p>- Add, edit, and delete other valid users</p>
 <p>- View the code? (i think)</p>
 <br><br>
-<p>Your password is <strong>($password)</strong>.</p>";
-<p>Enjoy the website :3</p>;
+<p>Your password is <strong>($password)</strong>.</p>
+<p>Enjoy the website :]</p>";
 
     $mail->SMTPDebug = 2; // or SMTP::DEBUG_SERVER
     $mail->Debugoutput = 'html';
