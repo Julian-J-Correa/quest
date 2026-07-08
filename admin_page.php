@@ -1,6 +1,6 @@
 <?php
 session_start();
-if ($_SESSION['password']) {
+if ($_SESSION['adminpassword'] && $_SESSION['adminname']) {
     // bibbity bobbity boo
 } else {
     $_SESSION['goto'] = 'admin';
@@ -206,7 +206,7 @@ if ($stmt->execute()) {
                     <li class="nav-item"><a class="nav-link" href="login_page.php">Admin</a></li>
                     <li class="nav-item"><a class="nav-link" href="about_page.php">About</a></li>
                     <li class="nav-item"><a class="nav-link"
-                            href="https://youtu.be/5YvzStBaays?si=AaYK-ST-fjV59d7B">Users</a></li>
+                            href="users_page.php">Users</a></li>
                 </ul>
             </div>
         </div>
@@ -323,7 +323,7 @@ if ($stmt->execute()) {
                             <?php echo $row->DateCreated ?>
                         </td>
                         <td>
-                            <a href="delete_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
+                            <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this record?');">
                                 Delete
                             </a>

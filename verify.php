@@ -1,5 +1,4 @@
 <?php
-// Always start this first
 session_start();
 
 $servername = "localhost";
@@ -16,20 +15,13 @@ if (!empty($_POST)) {
     if (isset($_POST['password']) && isset($_POST['adminname'])) {
         $_SESSION['adminpassword'] = $_POST['password'];
         $_SESSION['adminname'] = $_POST['adminname'];
-        $sql = "SELECT 1 FROM users WHERE Username = ? LIMIT 1";
+        $sql = "SELECT * FROM users WHERE Username=? AND Password=? LIMIT 1";
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$_SESSION['adminname']]);
-        $valueExists = $stmt->fetchColumn();
+        $stmt->bind_param("ss", $_SESSION['adminname'], $_SESSION['adminpassword']);
+        $stmt->execute();
+        $valueExists = $stmt->get_result();
         if ($valueExists == true) {
-            $sql = "SELECT * FROM users WHERE Username = ? AND Password = ? LIMIT 1";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$_SESSION['adminname']], [$_SESSION['adminpassword']]);
-            $valueExists = $stmt->fetchColumn();
-            if ($valueExists == true) {
-                echo whichPage();
-            } else {
-                header("Location: login_page.php");
-            }
+            echo whichPage();
         } else {
             header("Location: login_page.php");
         }

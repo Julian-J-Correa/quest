@@ -48,7 +48,7 @@
                     <li class="nav-item"><a class="nav-link" href="admin_page.php">Admin</a></li>
                     <li class="nav-item"><a class="nav-link" href="about_page.php">About</a></li>
                     <li class="nav-item"><a class="nav-link"
-                            href="https://youtu.be/5YvzStBaays?si=AaYK-ST-fjV59d7B">Users</a></li>
+                            href="users_page.php">Users</a></li>
                 </ul>
             </div>
         </div>
@@ -66,11 +66,11 @@
     </div>
     <form action="verify.php" method="post">
         <h4>
-            <?php echo '<p>Username</p>'; ?><br>
+            <?php echo '<p>Username</p>'; ?>
         </h4>
-        <input type="text" name="adminname" required>
+        <input type="text" name="adminname" required><br>
         <h4>
-            <?php echo '<p>Password</p>'; ?><br>
+            <?php echo '<p>Password</p>'; ?>
         </h4>
         <input type="password" name="password" required>
         <br><br>

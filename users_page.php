@@ -1,10 +1,10 @@
 <?php
 session_start();
-if ($_SESSION['password']) {
+if ($_SESSION['adminpassword'] && $_SESSION['adminname']) {
     // bibbity bobbity boo
 } else {
     $_SESSION['goto'] = 'users';
-    header("Location: users_page.php");
+    header("Location: login_page.php");
     exit;
 }
 $dateMin = $_POST['dateMin'] ?? '';
@@ -40,7 +40,7 @@ if (empty($nameSearch)) {
     if (!empty($dateMin) && !empty($dateMax)) {
 
         $stmt = $conn->prepare(
-            "SELECT * FROM results
+            "SELECT * FROM users
          WHERE DateCreated BETWEEN ? AND ?
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
@@ -51,7 +51,7 @@ if (empty($nameSearch)) {
     } elseif (!empty($dateMin) && empty($dateMax)) {
 
         $stmt = $conn->prepare(
-            "SELECT * FROM results
+            "SELECT * FROM users
          WHERE DateCreated >= ?
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
@@ -62,7 +62,7 @@ if (empty($nameSearch)) {
     } elseif (!empty($dateMax) && empty($dateMin)) {
 
         $stmt = $conn->prepare(
-            "SELECT * FROM results
+            "SELECT * FROM users
          WHERE DateCreated <= ?
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
@@ -73,7 +73,7 @@ if (empty($nameSearch)) {
     } else {
 
         $stmt = $conn->prepare(
-            "SELECT * FROM results
+            "SELECT * FROM users
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
         );
@@ -83,9 +83,9 @@ if (empty($nameSearch)) {
     if (!empty($dateMin) && !empty($dateMax)) {
 
         $stmt = $conn->prepare(
-            "SELECT * FROM results
+            "SELECT * FROM users
          WHERE DateCreated BETWEEN ? AND ?
-         AND Name LIKE CONCAT('%', ?, '%')
+         AND Username LIKE CONCAT('%', ?, '%')
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
         );
@@ -95,8 +95,8 @@ if (empty($nameSearch)) {
     } elseif (!empty($dateMin) && empty($dateMax)) {
 
         $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated >= ? AND Name LIKE CONCAT('%', ?, '%')
+            "SELECT * FROM users
+         WHERE DateCreated >= ? AND Username LIKE CONCAT('%', ?, '%')
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
         );
@@ -106,8 +106,8 @@ if (empty($nameSearch)) {
     } elseif (!empty($dateMax) && empty($dateMin)) {
 
         $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated <= ? AND Name LIKE CONCAT('%', ?, '%')
+            "SELECT * FROM users
+         WHERE DateCreated <= ? AND Username LIKE CONCAT('%', ?, '%')
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
         );
@@ -117,8 +117,8 @@ if (empty($nameSearch)) {
     } else {
 
         $stmt = $conn->prepare(
-         "SELECT * FROM results
-         WHERE Name LIKE CONCAT('%', ?, '%')
+         "SELECT * FROM users
+         WHERE Username LIKE CONCAT('%', ?, '%')
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
         );
@@ -206,7 +206,7 @@ if ($stmt->execute()) {
                     <li class="nav-item"><a class="nav-link" href="login_page.php">Admin</a></li>
                     <li class="nav-item"><a class="nav-link" href="about_page.php">About</a></li>
                     <li class="nav-item"><a class="nav-link"
-                            href="https://youtu.be/5YvzStBaays?si=AaYK-ST-fjV59d7B">Users</a></li>
+                            href="users_page.php">Users</a></li>
                 </ul>
             </div>
         </div>
@@ -271,11 +271,11 @@ if ($stmt->execute()) {
                             <?php echo $row->Password ?>
                         </td>
                         <td>
-                            <a href="delete_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
+                            <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this record?');">
                                 Edit
                             </a>
-                            <a href="delete_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
+                            <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this record?');">
                                 Delete
                             </a>
