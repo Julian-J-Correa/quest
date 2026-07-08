@@ -117,7 +117,7 @@ if (empty($nameSearch)) {
     } else {
 
         $stmt = $conn->prepare(
-         "SELECT * FROM users
+            "SELECT * FROM users
          WHERE Username LIKE CONCAT('%', ?, '%')
          ORDER BY DateCreated
          LIMIT $start, $page_rows"
@@ -128,7 +128,7 @@ if (empty($nameSearch)) {
 }
 
 if ($stmt->execute()) {
-    $result = $stmt->get_result();
+    $usertable = $stmt->get_result();
 } else {
     echo "Error code: " . $stmt->error;
 }
@@ -205,8 +205,7 @@ if ($stmt->execute()) {
                     <li class="nav-item"><a class="nav-link" href="page_1.php">Questionaire</a></li>
                     <li class="nav-item"><a class="nav-link" href="login_page.php">Admin</a></li>
                     <li class="nav-item"><a class="nav-link" href="about_page.php">About</a></li>
-                    <li class="nav-item"><a class="nav-link"
-                            href="users_page.php">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" href="users_page.php">Users</a></li>
                 </ul>
             </div>
         </div>
@@ -219,6 +218,9 @@ if ($stmt->execute()) {
         </div>
     </header>
     <div class="text-center" style="color: green">
+        <a href="add_page.php" class="btn btn-success btn-sm">
+            Add User
+        </a>
         <form action="admin_page.php" method="post">
             <h4>
                 <p style="color: green">Search for name</p>
@@ -254,9 +256,12 @@ if ($stmt->execute()) {
                     <th>
                         Password
                     </th>
+                    <th>
+                        Actions
+                    </th>
                 </tr>
 
-                <?php while ($row = $users->fetch_object()) { ?>
+                <?php while ($row = $usertable->fetch_object()) { ?>
                     <tr>
                         <td>
                             <?php echo $row->UserID ?>
@@ -271,8 +276,7 @@ if ($stmt->execute()) {
                             <?php echo $row->Password ?>
                         </td>
                         <td>
-                            <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Are you sure you want to delete this record?');">
+                            <a href="edit_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-warning btn-sm">
                                 Edit
                             </a>
                             <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
