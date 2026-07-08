@@ -59,7 +59,7 @@ if (isset($_POST['addUser'])) {
 <p>- View the code? (i think)</p>
 <br><br>
 <p>Your password is <strong>($password)</strong>.</p>";
-<p>Enjoy the website :3</p>
+<p>Enjoy the website :3</p>;
 
     $mail->SMTPDebug = 2; // or SMTP::DEBUG_SERVER
     $mail->Debugoutput = 'html';
