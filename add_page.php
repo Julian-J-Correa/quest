@@ -68,7 +68,7 @@ if (isset($_POST['addUser'])) {
 
 
     if ($addStmt->execute()) {
-        header("Location: admin_page.php");
+        header("Location: users_page.php");
         exit;
     } else {
         echo "Insert failed: " . $conn->error;
