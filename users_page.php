@@ -218,9 +218,9 @@ if ($stmt->execute()) {
         </div>
     </header>
     <div class="text-center" style="color: green">
-        <a href="add_page.php" class="btn btn-success btn-sm">
-            Add User
-        </a>
+            <a href="add_page.php" class="btn btn-success btn-lrg">
+                Add User
+            </a><br><br>
         <form action="admin_page.php" method="post">
             <h4>
                 <p style="color: green">Search for name</p>

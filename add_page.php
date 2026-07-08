@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 if (!isset($_SESSION['adminpassword']) || !isset($_SESSION['adminname'])) {
     $_SESSION['goto'] = 'users';
     header("Location: login_page.php");
@@ -25,6 +31,29 @@ if (isset($_POST['addUser'])) {
     );
 
     $addStmt->bind_param("sss", $username, $email, $password);
+
+    $mail = new PHPMailer(true);
+
+    $mail->isSMTP();
+    $mail->Host = 'smtp.office365.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'dev@mi-wifi.com';
+    $mail->Password = '456852';
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
+
+    $mail->setFrom('dev@miwifi.com', 'Quest Test');
+    $mail->addAddress($email, $username);
+
+    $mail->isHTML(true);
+    $mail->Subject = 'Welcome!';
+    $mail->Body = "
+<h2>Welcome, $username!</h2>
+<p>Your account has been created successfully.</p>
+<p>You can now log in using <strong>$email</strong>.</p>";
+
+    $mail->send();
+
 
     if ($addStmt->execute()) {
         header("Location: admin_page.php");
