@@ -22,7 +22,7 @@ $result = $selectStmt->get_result();
 $row = $result->fetch_assoc();
 
 $updateStmt = $conn->prepare(
-        "UPDATE results
+        "UPDATE users
          SET Username = ?, Email = ?, Password = ?
          WHERE UserID = ?"
     );
