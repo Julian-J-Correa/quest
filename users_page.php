@@ -7,12 +7,6 @@ if ($_SESSION['adminpassword'] && $_SESSION['adminname']) {
     header("Location: login_page.php");
     exit;
 }
-$dateMin = $_POST['dateMin'] ?? '';
-$dateMax = $_POST['dateMax'] ?? '';
-$nameSearch = $_POST['nameSearch'] ?? '';
-$start = 0;
-$page_rows = 10;
-$page_selected = 0;
 
 $servername = "localhost";
 $username = "root";
@@ -24,113 +18,9 @@ if ($conn->connect_error) {
     die("Failed connection: " . $conn->connect_error);
 }
 
-$record_count = $conn->query("SELECT * FROM users");
-$num_of_rows = $record_count->num_rows;
-$pages = ceil($num_of_rows / $page_rows);
-if (isset($_GET['page-nr'])) {
-    $page_selected = $_GET['page-nr'] - 1;
-    $start = $page_selected * $page_rows;
-    $page_id = $_GET['page-nr'];
-} else {
-    $page_id = 1;
-    $page_selected = 1;
-}
-
-if (empty($nameSearch)) {
-    if (!empty($dateMin) && !empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         WHERE DateCreated BETWEEN ? AND ?
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("ss", $dateMin, $dateMax);
-
-    } elseif (!empty($dateMin) && empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         WHERE DateCreated >= ?
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("s", $dateMin);
-
-    } elseif (!empty($dateMax) && empty($dateMin)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         WHERE DateCreated <= ?
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("s", $dateMax);
-
-    } else {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-    }
-} else {
-    if (!empty($dateMin) && !empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         WHERE DateCreated BETWEEN ? AND ?
-         AND Username LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("sss", $dateMin, $dateMax, $nameSearch);
-
-    } elseif (!empty($dateMin) && empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         WHERE DateCreated >= ? AND Username LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("ss", $dateMin, $nameSearch);
-
-    } elseif (!empty($dateMax) && empty($dateMin)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         WHERE DateCreated <= ? AND Username LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("ss", $dateMax, $nameSearch);
-
-    } else {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users
-         WHERE Username LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("s", $nameSearch);
-    }
-}
-
-if ($stmt->execute()) {
-    $usertable = $stmt->get_result();
-} else {
-    echo "Error code: " . $stmt->error;
+$result = $conn->query("SELECT * FROM users");
+if (!$result) {
+    echo "Query error: " . $conn->error;
 }
 ?>
 
@@ -220,25 +110,7 @@ if ($stmt->execute()) {
     <div class="text-center" style="color: green">
         <a href="add_page.php" class="btn btn-success btn-lrg">
             Add User
-        </a><br><br>
-        <form action="users_page.php" method="post">
-            <h4>
-                <p style="color: green">Search for name</p>
-            </h4>
-            <input type="text" name="nameSearch">
-            <h4>
-                <p style="color: green">Max Date</p>
-            </h4>
-            <input type="date" name="dateMax" value="<?php echo htmlspecialchars($_POST['dateMax'] ?? ''); ?>"
-                max="<?php echo date('Y-m-d'); ?>">
-            <h4>
-                <p style="color: green">Min Date</p>
-            </h4>
-            <input type="date" name="dateMin" value="<?php echo htmlspecialchars($_POST['dateMin'] ?? ''); ?>">
-            <br><br>
-            <input type="submit" value="Filter" class="btn btn-lg btn-light border border-primary">
-            <br><br>
-        </form>
+        </a>
     </div>
     <div class="row top-buffer">
         <div class="col-md-12">
@@ -264,25 +136,23 @@ if ($stmt->execute()) {
                             Actions
                         </th>
                 </thead>
-                </tr>
-
-                <tr>
-                    <?php while ($row = $usertable->fetch_object()) { ?>
-                        <tbody>
+                <tbody>
+                    <?php while ($row = $result->fetch_object()) { ?>
+                        <tr>
                             <td>
-                                <?php echo $row->UserID ?>
+                                <?php echo htmlspecialchars($row->UserID); ?>
                             </td>
                             <td>
-                                <?php echo $row->Username ?>
+                                <?php echo htmlspecialchars($row->Username); ?>
                             </td>
                             <td>
-                                <?php echo $row->Email ?>
+                                <?php echo htmlspecialchars($row->Email); ?>
                             </td>
                             <td>
-                                <?php echo $row->Password ?>
+                                <?php echo htmlspecialchars($row->Password); ?>
                             </td>
                             <td>
-                                <?php echo $row->DateCreated ?>
+                                <?php echo htmlspecialchars($row->DateCreated); ?>
                             </td>
                             <td>
                                 <a href="edit_user_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-warning btn-sm">
@@ -293,10 +163,11 @@ if ($stmt->execute()) {
                                     Delete
                                 </a>
                             </td>
-                        </tbody>
+                        </tr>
                     <?php } ?>
-                </tr>
+                </tbody>
             </table>
+
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -328,7 +199,7 @@ if ($stmt->execute()) {
 
 <?php
 
-$stmt->close();
+$result->close();
 $conn->close();
 
 ?>

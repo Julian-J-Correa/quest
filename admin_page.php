@@ -7,12 +7,6 @@ if ($_SESSION['adminpassword'] && $_SESSION['adminname']) {
     header("Location: login_page.php");
     exit;
 }
-$dateMin = $_POST['dateMin'] ?? '';
-$dateMax = $_POST['dateMax'] ?? '';
-$nameSearch = $_POST['nameSearch'] ?? '';
-$start = 0;
-$page_rows = 10;
-$page_selected = 0;
 
 $servername = "localhost";
 $username = "root";
@@ -24,7 +18,6 @@ if ($conn->connect_error) {
     die("Failed connection: " . $conn->connect_error);
 }
 
-// Fetch all results
 $result = $conn->query("SELECT * FROM results");
 if (!$result) {
     echo "Query error: " . $conn->error;
