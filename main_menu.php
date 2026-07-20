@@ -75,7 +75,7 @@
                 <a href="about_page.php" class="link-primary h4">About</a>
             </div>
             <div class="col border border-primary text-center bg-primary link-primary" style="colour: red"">
-                <a href="https://youtu.be/5YvzStBaays?si=AaYK-ST-fjV59d7B" class="link-primary h4">Users</a>
+                <a href="users_page.php" class="link-primary h4">Users</a>
             </div>
         </div>
     </div>

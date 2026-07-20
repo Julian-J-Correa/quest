@@ -276,7 +276,7 @@ if ($stmt->execute()) {
                             <?php echo $row->Password ?>
                         </td>
                         <td>
-                            <a href="edit_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-warning btn-sm">
+                            <a href="edit_user_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-warning btn-sm">
                                 Edit
                             </a>
                             <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
