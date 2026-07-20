@@ -24,113 +24,10 @@ if ($conn->connect_error) {
     die("Failed connection: " . $conn->connect_error);
 }
 
-$record_count = $conn->query("SELECT * FROM results");
-$num_of_rows = $record_count->num_rows;
-$pages = ceil($num_of_rows / $page_rows);
-if (isset($_GET['page-nr'])) {
-    $page_selected = $_GET['page-nr'] - 1;
-    $start = $page_selected * $page_rows;
-    $page_id = $_GET['page-nr'];
-} else {
-    $page_id = 1;
-    $page_selected = 1;
-}
-
-if (empty($nameSearch)) {
-    if (!empty($dateMin) && !empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated BETWEEN ? AND ?
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("ss", $dateMin, $dateMax);
-
-    } elseif (!empty($dateMin) && empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated >= ?
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("s", $dateMin);
-
-    } elseif (!empty($dateMax) && empty($dateMin)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated <= ?
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("s", $dateMax);
-
-    } else {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM results
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-    }
-} else {
-    if (!empty($dateMin) && !empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated BETWEEN ? AND ?
-         AND Name LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("sss", $dateMin, $dateMax, $nameSearch);
-
-    } elseif (!empty($dateMin) && empty($dateMax)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated >= ? AND Name LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("ss", $dateMin, $nameSearch);
-
-    } elseif (!empty($dateMax) && empty($dateMin)) {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM results
-         WHERE DateCreated <= ? AND Name LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("ss", $dateMax, $nameSearch);
-
-    } else {
-
-        $stmt = $conn->prepare(
-         "SELECT * FROM results
-         WHERE Name LIKE CONCAT('%', ?, '%')
-         ORDER BY DateCreated
-         LIMIT $start, $page_rows"
-        );
-
-        $stmt->bind_param("s", $nameSearch);
-    }
-}
-
-if ($stmt->execute()) {
-    $result = $stmt->get_result();
-} else {
-    echo "Error code: " . $stmt->error;
+// Fetch all results
+$result = $conn->query("SELECT * FROM results");
+if (!$result) {
+    echo "Query error: " . $conn->error;
 }
 ?>
 
@@ -145,9 +42,9 @@ if ($stmt->execute()) {
     <meta name="author" content="" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="css/styles.css" rel="stylesheet" />
+      <link href="css/styles.css" rel="stylesheet" />
     <style>
         .bg-primary {
             background-color: #90ffff !important;
@@ -205,8 +102,7 @@ if ($stmt->execute()) {
                     <li class="nav-item"><a class="nav-link" href="page_1.php">Questionaire</a></li>
                     <li class="nav-item"><a class="nav-link" href="login_page.php">Admin</a></li>
                     <li class="nav-item"><a class="nav-link" href="about_page.php">About</a></li>
-                    <li class="nav-item"><a class="nav-link"
-                            href="users_page.php">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" href="users_page.php">Users</a></li>
                 </ul>
             </div>
         </div>
@@ -218,179 +114,123 @@ if ($stmt->execute()) {
             <p class="lead">This table contains all the information stored in the database from the questionaires</p>
         </div>
     </header>
-    <div class="text-center" style="color: green">
-        <form action="admin_page.php" method="post">
-            <h4>
-                <p style="color: green">Search for name</p>
-            </h4>
-            <input type="text" name="nameSearch">
-            <h4>
-                <p style="color: green">Max Date</p>
-            </h4>
-            <input type="date" name="dateMax" value="<?php echo htmlspecialchars($_POST['dateMax'] ?? ''); ?>"
-                max="<?php echo date('Y-m-d'); ?>">
-            <h4>
-                <p style="color: green">Min Date</p>
-            </h4>
-            <input type="date" name="dateMin" value="<?php echo htmlspecialchars($_POST['dateMin'] ?? ''); ?>">
-            <br><br>
-            <input type="submit" value="Filter" class="btn btn-lg btn-light border border-primary">
-            <br><br>
-        </form>
-    </div>
     <div class="row top-buffer">
         <div class="col-md-12">
-            <table class="table table-striped top-buffer">
-                <tr>
-                    <th>
-                        UserID
-                    </th>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Reason
-                    </th>
-                    <th>
-                        Favourite Number
-                    </th>
-                    <th>
-                        Answering By Choice?
-                    </th>
-                    <th>
-                        Part of Earth
-                    </th>
-                    <th>
-                        Favourite Colour
-                    </th>
-                    <th>
-                        Guessed Date of Establishment
-                    </th>
-                    <th>
-                        Tax PDF
-                    </th>
-                    <th>
-                        Link to PDF
-                    </th>
-                    <th>
-                        Date of Creation
-                    </th>
-                    <th>
-                        Actions
-                    </th>
-                </tr>
-
-                <?php while ($row = $result->fetch_object()) { ?>
+            <table id="myTable" class="table table-striped top-buffer">
+                <thead>
                     <tr>
-                        <td>
-                            <?php echo $row->UserID ?>
-                        </td>
-                        <td>
-                            <?php echo $row->Name ?>
-                        </td>
-                        <td>
-                            <?php echo $row->Reason ?>
-                        </td>
-                        <td>
-                            <?php echo $row->FavNum ?>
-                        </td>
-                        <td>
-                            <?php
-                            if ($row->ByChoice == 1) {
-                                echo "Yes";
-                            } else {
-                                echo "No";
-                            } ?>
-                        </td>
-                        <td>
-                            <?php echo $row->EarthDir ?>
-                        </td>
-                        <td>
-                            <?php echo $row->FavColour ?>
-                        </td>
-                        <td>
-                            <?php echo $row->DateGuess ?>
-                        </td>
-                        <td>
-                            <?php echo $row->TaxName ?>
-                        </td>
-                        <td>
-                            <a href="<?php echo htmlspecialchars($row->TaxPath); ?>" target="_blank">
-                                <?php echo htmlspecialchars($row->TaxName); ?>
-                            </a>
-                        </td>
-                        <td>
-                            <?php echo $row->DateCreated ?>
-                        </td>
-                        <td>
-                            <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Are you sure you want to delete this record?');">
-                                Delete
-                            </a>
-                        </td>
+                        <th>
+                            UserID
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Reason
+                        </th>
+                        <th>
+                            Favourite Number
+                        </th>
+                        <th>
+                            Answering By Choice?
+                        </th>
+                        <th>
+                            Part of Earth
+                        </th>
+                        <th>
+                            Favourite Colour
+                        </th>
+                        <th>
+                            Guessed Date of Establishment
+                        </th>
+                        <th>
+                            Tax PDF
+                        </th>
+                        <th>
+                            Link to PDF
+                        </th>
+                        <th>
+                            Date of Creation
+                        </th>
+                        <th>
+                            Actions
+                        </th>
                     </tr>
-                <?php } ?>
+                </thead>
+
+                <tbody>
+                    <?php while ($row = $result->fetch_object()) { ?>
+                        <tr>
+                            <td>
+                                <?php echo $row->UserID ?>
+                            </td>
+                            <td>
+                                <?php echo $row->Name ?>
+                            </td>
+                            <td>
+                                <?php echo $row->Reason ?>
+                            </td>
+                            <td>
+                                <?php echo $row->FavNum ?>
+                            </td>
+                            <td>
+                                <?php
+                                if ($row->ByChoice == 1) {
+                                    echo "Yes";
+                                } else {
+                                    echo "No";
+                                } ?>
+                            </td>
+                            <td>
+                                <?php echo $row->EarthDir ?>
+                            </td>
+                            <td>
+                                <?php echo $row->FavColour ?>
+                            </td>
+                            <td>
+                                <?php echo $row->DateGuess ?>
+                            </td>
+                            <td>
+                                <?php echo $row->TaxName ?>
+                            </td>
+                            <td>
+                                <a href="<?php echo htmlspecialchars($row->TaxPath); ?>" target="_blank">
+                                    <?php echo htmlspecialchars($row->TaxName); ?>
+                                </a>
+                            </td>
+                            <td>
+                                <?php echo $row->DateCreated ?>
+                            </td>
+                            <td>
+                                <a href="delete.php?id=<?php echo $row->UserID; ?>" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this record?');">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
             </table>
         </div>
     </div>
-    <div class="page-info" style="color: green">
-        <h5>
-            Page <?php echo $page_id ?> of <?php echo $pages ?>
-        </h5>
-    </div>
-    <div class="pagination">
-        <div class="row">
-            <div class="col border border-primary text-center bg-primary link-primary" style="colour: red">
-                <a href="?page-nr=1">First</a>
-            </div>
-            <div class="col border border-primary text-center bg-primary link-primary" style="colour: red">
-                <?php
-                if (isset($_GET['page-nr']) && ($_GET['page-nr'] > 1)) {
-                    ?>
-                    <a href="?page-nr=<?php echo $_GET['page-nr'] - 1 ?>">Previous</a>
-                    <?php
-                } else {
-                    ?>
-                    <a>Previous</a>
-                    <?php
-                }
-                ?>
-            </div>
-            <div class="col border border-primary text-center bg-primary link-primary" style="colour: red">
-                <?php
-                if (!isset($_GET['page-nr'])) {
-                    ?>
-                    <a href="?page-nr=2">Next</a>
-                    <?php
-                } else {
-                    if ($_GET['page-nr'] >= $pages) {
-                        ?>
-                        <a>Next</a>
-                        <?php
-                    } else {
-                        ?>
-                        <a href="?page-nr=<?php echo $_GET['page-nr'] + 1 ?>">Next</a>
-                        <?php
-                    }
-                }
-                ?>
-            </div>
-            <div class="col border border-primary text-center bg-primary link-primary" style="colour: red">
-                <a href="?page-nr=<?php echo $pages ?>">Last</a>
-            </div>
-            <div class="row justify-content-center">
-                <?php
-                for ($i = 1; $i <= $pages; $i++) {
-                    ?>
-                    <div class="col-auto">
-                        <a class="page-circle" href="?page-nr=<?php echo $i ?>"><?php echo $i ?></a>
-                    </div>
-                    <?php
-                }
-                ?>
-            </div>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
+    <script>
+        console.log(typeof DataTable);
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DataTables starting");
+            new DataTable("#myTable", {
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                searching: true,
+                ordering: true,
+                info: true
+            });
+        });
+    </script>
 </body>
 <footer class="py-5 bg-dark">
     <div class="container px-4">
@@ -402,7 +242,7 @@ if ($stmt->execute()) {
 
 <?php
 
-$stmt->close();
+$result->close();
 $conn->close();
 
 ?>
