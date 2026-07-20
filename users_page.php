@@ -203,7 +203,7 @@ if ($stmt->execute()) {
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="page_1.php">Questionaire</a></li>
-                    <li class="nav-item"><a class="nav-link" href="login_page.php">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin_page.php">Admin</a></li>
                     <li class="nav-item"><a class="nav-link" href="about_page.php">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="users_page.php">Users</a></li>
                 </ul>
@@ -257,6 +257,9 @@ if ($stmt->execute()) {
                         Password
                     </th>
                     <th>
+                        Date Created
+                    </th>
+                    <th>
                         Actions
                     </th>
                 </tr>
@@ -274,6 +277,9 @@ if ($stmt->execute()) {
                         </td>
                         <td>
                             <?php echo $row->Password ?>
+                        </td>
+                        <td>
+                            <?php echo $row->DateCreated ?>
                         </td>
                         <td>
                             <a href="edit_user_page.php?id=<?php echo $row->UserID; ?>" class="btn btn-warning btn-sm">

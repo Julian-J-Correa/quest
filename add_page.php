@@ -24,13 +24,14 @@ if (isset($_POST['addUser'])) {
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $date = date("Y-m-d") . "";
 
     $addStmt = $conn->prepare(
-        "INSERT INTO users (Username, Email, Password)
-         VALUES (?, ?, ?)"
+        "INSERT INTO users (Username, Email, Password, DateCreated)
+         VALUES (?, ?, ?, ?)"
     );
 
-    $addStmt->bind_param("sss", $username, $email, $password);
+    $addStmt->bind_param("ssss", $username, $email, $password, $date);
 
     $mail = new PHPMailer(true);
 
