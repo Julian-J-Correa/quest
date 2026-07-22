@@ -135,13 +135,13 @@ if (isset($_POST['addUser'])) {
     </nav>
     <header class="bg-primary bg-gradient">
         <div class="container px-4 text-center" style="color: green">
-            <h1>"<p class="fw-bolder">Welcome to The PHP Questionaire</p>
+            <h1>"<p class="fw-bolder">Add a User</p>
             </h1>
-            <p class="lead">This site is for you to answer the questionaire and view what other users have answered too
+            <p class="lead">Create a new user for this website. The user get an email with their password.</p>
             </p>
         </div>
     </header>
-    <form method="post">
+    <form method="post" style="padding-left: 20px;">
         <h4 style="color: green">Name</h4>
         <input type="text" name="username" required>
 

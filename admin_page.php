@@ -113,7 +113,7 @@ if (!$result) {
             <p class="lead">This table contains all the information stored in the database from the questionaires</p>
         </div>
     </header>
-    <div class="row top-buffer">
+    <div class="row top-buffer" style="padding-left: 10px; padding-right: 10px;">
         <div class="col-md-12">
             <table id="myTable" class="table table-striped top-buffer">
                 <thead>

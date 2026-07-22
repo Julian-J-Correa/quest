@@ -60,7 +60,7 @@
                 <p class="lead">This site is for you to answer the questionaire and view what other users have answered too</p>
         </div>
     </header>
-    <div class="container">
+    <div class="container" style="padding: 30px;">
         <div class="row">
             <div class="col border border-primary text-center bg-primary link-primary" style="colour: red">
                 <a href="page_1.php" class="link-primary h4">Start questionnaire</a>

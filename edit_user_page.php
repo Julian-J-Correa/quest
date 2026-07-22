@@ -110,18 +110,17 @@ if (isset($_POST['update'])) {
     </nav>
     <header class="bg-primary bg-gradient">
         <div class="container px-4 text-center" style="color: green">
-            <h1>"<p class="fw-bolder">Welcome to The PHP Questionaire</p>
+            <h1>"<p class="fw-bolder">Edit User</p>
             </h1>
-            <p class="lead">This site is for you to answer the questionaire and view what other users have answered too
-            </p>
+            <p class="lead">Update the user's information below.</p>
         </div>
     </header>
 
-    <form method="post">
+    <form method="post" style="padding-left: 20px;">
 
         <input type="hidden" name="id" value="<?php echo $row['UserID']; ?>">
 
-        <h4 style="color: green">Username</h4>
+        <h4 style="color: green">Name</h4>
         <input type="text" name="username" value="<?php echo htmlspecialchars($row['Username']); ?>">
 
         <br><br>
