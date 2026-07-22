@@ -37,7 +37,7 @@ if (!$result) {
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-      <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
     <style>
         .bg-primary {
             background-color: #90ffff !important;
@@ -79,6 +79,12 @@ if (!$result) {
         .page-circle:hover {
             background: #028ac0;
             color: white;
+        }
+
+        .wrap {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
         }
     </style>
 </head>
@@ -160,7 +166,7 @@ if (!$result) {
                             <td>
                                 <?php echo $row->Name ?>
                             </td>
-                            <td>
+                            <td class="wrap">
                                 <?php echo $row->Reason ?>
                             </td>
                             <td>
@@ -215,12 +221,13 @@ if (!$result) {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             console.log("DataTables starting");
-            new DataTable("#myTable", {
+            var table = new DataTable("#myTable", {
                 pageLength: 5,
                 lengthMenu: [5, 10, 25, 50],
                 searching: true,
                 ordering: true,
-                info: true
+                info: true,
+                columnDefs: [{ width: '20%', targets: 2 }]
             });
         });
     </script>
